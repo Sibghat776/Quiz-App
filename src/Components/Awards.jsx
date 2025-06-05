@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 export default function Awards() {
+    let [questionNumber, setQuestionNumber] = useState(1)
     const rewards = [
         { id: 1, rewardAmount: 5000 },
         { id: 2, rewardAmount: 10000 },
@@ -24,7 +25,9 @@ export default function Awards() {
                 <div className="awardsLists">
                     {
                         rewards.map((reward) => (
-                            <div className='awardItem'>
+                            <div className={
+                                reward.id == questionNumber ? "active awardItem" : "awardItem"
+                            }>
                                 <div className="serialNumbers">
                                     {reward.id}
                                 </div>  Rs: {reward.rewardAmount} -/
