@@ -138,7 +138,6 @@ export default function Questions() {
     const [reviewMode, setReviewMode] = useState(false);
     const [userAnswers, setUserAnswers] = useState({});
 
-
     useEffect(() => {
         if (questionNumber <= islamicQuiz.length) {
             setQuestion(islamicQuiz[questionNumber - 1]);
@@ -155,7 +154,28 @@ export default function Questions() {
         return () => clearInterval(timer);
     }, [count, showResult]);
 
-    const handleOptionClick = (option) => {
+    // Skip on timeout
+    useEffect(() => {
+        if (count === 0 && !showResult) {
+            setUserAnswers(prev => ({
+                ...prev,
+                [questionNumber - 1]: -1
+            }));
+            if (questionNumber === islamicQuiz.length) {
+                setShowResult(true);
+            } else {
+                setQuestionNumber(prev => prev + 1);
+                setCount(20);
+            }
+        }
+    }, [count]);
+
+    const handleOptionClick = (option, index) => {
+        setUserAnswers(prev => ({
+            ...prev,
+            [questionNumber - 1]: index
+        }));
+
         if (option.correct) {
             setScore(prev => prev + 1);
         }
@@ -172,6 +192,7 @@ export default function Questions() {
         setReviewMode(true);
         setShowResult(false);
     };
+
     const exitReview = () => {
         setReviewMode(false);
         restartQuiz();
@@ -182,10 +203,7 @@ export default function Questions() {
         setScore(0);
         setShowResult(false);
         setCount(20);
-    };
-
-    const reviewAnswers = () => {
-        alert("Review functionality not implemented yet.");
+        setUserAnswers({});
     };
 
     if (reviewMode) {
@@ -218,6 +236,7 @@ export default function Questions() {
             </div>
         );
     }
+
     return (
         <>
             {!showResult ? (
@@ -235,7 +254,7 @@ export default function Questions() {
                                     <div
                                         className="optionItem"
                                         key={index}
-                                        onClick={() => handleOptionClick(option)}
+                                        onClick={() => handleOptionClick(option, index)}
                                     >
                                         {option.text}
                                     </div>
